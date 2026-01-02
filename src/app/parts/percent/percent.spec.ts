@@ -1,18 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
-import { Percentcomponent } from './percent';
+import { Percent } from './percent';
 
-describe('Percentcomponent', () => {
-  let component: Percentcomponent;
-  let fixture: ComponentFixture<Percentcomponent>;
+describe('Percent', () => {
+  let component: Percent;
+  let fixture: ComponentFixture<Percent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Percentcomponent]
+      imports: [Percent],
+      providers: [provideZonelessChangeDetection()],
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Percentcomponent);
+    fixture = TestBed.createComponent(Percent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

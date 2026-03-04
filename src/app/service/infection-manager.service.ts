@@ -1,15 +1,13 @@
-import {Injectable} from '@angular/core';
-import {Region} from "../class/Region";
-import {BlackCities, BlueCities, RedCities, YellowCities} from "../class/Cities";
+import { Injectable } from '@angular/core';
+import { Region } from '../class/Region';
+import { CITY_CONFIG } from '../class/Cities';
+import { Color } from '../class/Color';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class InfectionManagerService {
-  blueRegion!: Region;
-  yellowRegion!: Region;
-  blackRegion!: Region;
-  redRegion!: Region;
+  regions!: Record<Color, Region>;
   openCities!: Array<Map<string, string>>;
   excludeCities!: Array<string>;
 
@@ -24,34 +22,24 @@ export class InfectionManagerService {
   }
 
   initializeCities() {
-    this.blueRegion = new Region(BlueCities, "bg-blue-500");
-    this.yellowRegion = new Region(YellowCities, "bg-yellow-400");
-    this.blackRegion = new Region(BlackCities, "bg-black");
-    this.redRegion = new Region(RedCities, "bg-red-500");
+    this.regions = {
+      blue: new Region(CITY_CONFIG.blue.cities, CITY_CONFIG.blue.uiColor),
+      yellow: new Region(CITY_CONFIG.yellow.cities, CITY_CONFIG.yellow.uiColor),
+      black: new Region(CITY_CONFIG.black.cities, CITY_CONFIG.black.uiColor),
+      red: new Region(CITY_CONFIG.red.cities, CITY_CONFIG.red.uiColor),
+    };
   }
 
   drawCard() {
     const openMap = new Map<string, string>();
-    for (const c of this.blueRegion.getList()) {
-      if (!c[1]) {
-        openMap.set(c[0], this.blueRegion.getColor());
+
+    (Object.values(this.regions) as Region[]).forEach((region) => {
+      for (const [name, isClosed] of region.getList()) {
+        if (!isClosed) {
+          openMap.set(name, region.getColor());
+        }
       }
-    }
-    for (const c of this.yellowRegion.getList()) {
-      if (!c[1]) {
-        openMap.set(c[0], this.yellowRegion.getColor());
-      }
-    }
-    for (const c of this.blackRegion.getList()) {
-      if (!c[1]) {
-        openMap.set(c[0], this.blackRegion.getColor());
-      }
-    }
-    for (const c of this.redRegion.getList()) {
-      if (!c[1]) {
-        openMap.set(c[0], this.redRegion.getColor());
-      }
-    }
+    });
 
     for (const [key, _] of openMap) {
       for (const cities of this.openCities) {
@@ -59,11 +47,11 @@ export class InfectionManagerService {
       }
     }
     this.openCities.unshift(openMap);
-    this.openCities = this.openCities.filter(s => s.size != 0);
+    this.openCities = this.openCities.filter((s) => s.size != 0);
   }
 
   popOpenCity(cityName: string) {
-    this.openCities.forEach(citiesSet => {
+    this.openCities.forEach((citiesSet) => {
       citiesSet.delete(cityName);
     });
   }

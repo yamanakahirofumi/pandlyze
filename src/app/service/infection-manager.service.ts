@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Region } from '../class/Region';
-import { CITY_CONFIG } from '../class/Cities';
-import { Color } from '../class/Color';
+import {Injectable} from '@angular/core';
+import {Region} from '../class/Region';
+import {CITY_CONFIG} from '../class/Cities';
+import {Color} from '../class/Color';
 
 @Injectable({
   providedIn: 'root',

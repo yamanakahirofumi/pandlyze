@@ -1,10 +1,10 @@
-import { Component, signal, WritableSignal, inject } from '@angular/core';
-import { PlayerCardsService } from './service/player-cards.service';
-import { InfectionManagerService } from './service/infection-manager.service';
-import { Region } from './class/Region';
-import { Percent } from './parts/percent/percent';
-import { CityTile } from './parts/city-tile/city-tile';
-import { Color } from './class/Color';
+import {Component, signal, WritableSignal, inject} from '@angular/core';
+import {PlayerCardsService} from './service/player-cards.service';
+import {InfectionManagerService} from './service/infection-manager.service';
+import {Region} from './class/Region';
+import {Percent} from './parts/percent/percent';
+import {CityTile} from './parts/city-tile/city-tile';
+import {Color} from './class/Color';
 
 @Component({
   selector: 'app-root',

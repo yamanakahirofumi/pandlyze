@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, signal, WritableSignal, inject} from '@angular/core';
 import {PlayerCardsService} from './service/player-cards.service';
 import {InfectionManagerService} from './service/infection-manager.service';
 import {Region} from './class/Region';
@@ -8,41 +8,23 @@ import {Color} from './class/Color';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    Percent,
-    CityTile
-  ],
+  imports: [Percent, CityTile],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App implements OnInit {
-  resetModalFlag: WritableSignal<boolean> = signal(false);
-  colorList: Color[] = ['red', 'blue', 'yellow', 'black'];
-  playerCards!: Record<Color, Region>;
-  infectionCards!: Record<Color, Region>;
+export class App {
+  private readonly playerCardsService = inject(PlayerCardsService);
+  private readonly infectionManagerService = inject(InfectionManagerService);
 
-  constructor(private playerCardsService: PlayerCardsService,
-              private infectionManagerService: InfectionManagerService) {
+  resetModalFlag = signal(false);
+  readonly colorList: Color[] = ['red', 'blue', 'yellow', 'black'];
+
+  get playerCards() {
+    return this.playerCardsService.regions;
   }
 
-  ngOnInit() {
-    this.playerCards = {
-      red: this.playerCardsService.redRegion,
-      blue: this.playerCardsService.blueRegion,
-      yellow: this.playerCardsService.yellowRegion,
-      black: this.playerCardsService.blackRegion,
-    }
-
-    this.initInfection();
-  }
-
-  initInfection() {
-    this.infectionCards = {
-      red: this.infectionManagerService.redRegion,
-      blue: this.infectionManagerService.blueRegion,
-      yellow: this.infectionManagerService.yellowRegion,
-      black: this.infectionManagerService.blackRegion,
-    }
+  get infectionCards() {
+    return this.infectionManagerService.regions;
   }
 
   changeValue(region: Region, name: string) {
@@ -74,7 +56,6 @@ export class App implements OnInit {
     this.infectionManagerService.drawCard();
     this.infectionManagerService.initializeCities();
     this.playerCardsService.epidemic();
-    this.initInfection();
   }
 
   modeChange() {
@@ -85,26 +66,9 @@ export class App implements OnInit {
     return this.infectionManagerService.openCities;
   }
 
-  exclude(region: Region, name: string) {
-
-  }
+  exclude(region: Region, name: string) {}
 
   getCount(color: Color): number {
-    let count = 0;
-    switch (color) {
-      case 'red':
-        count = this.playerCardsService.redCount();
-        break;
-      case 'blue':
-        count = this.playerCardsService.blueCount();
-        break;
-      case 'yellow':
-        count = this.playerCardsService.yellowCount();
-        break;
-      case 'black':
-        count = this.playerCardsService.blackCount();
-        break;
-    }
-    return count;
+    return this.playerCardsService.getCount(color);
   }
 }

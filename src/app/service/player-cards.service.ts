@@ -1,15 +1,13 @@
 import {Injectable} from '@angular/core';
-import {Region} from "../class/Region";
-import {BlackCities, BlueCities, RedCities, YellowCities} from "../class/Cities";
+import {Region} from '../class/Region';
+import {CITY_CONFIG} from '../class/Cities';
+import {Color} from '../class/Color';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlayerCardsService {
-  blueRegion!: Region;
-  yellowRegion!: Region;
-  blackRegion!: Region;
-  redRegion!: Region;
+  regions!: Record<Color, Region>;
   totalEpidemic!: number;
   nowEpidemic!: number;
   eventCards!: number;
@@ -24,30 +22,25 @@ export class PlayerCardsService {
     this.totalInitialSize = initialSize;
     this.nowEpidemic = 0;
     this.eventCards = 0;
-    this.blueRegion = new Region(BlueCities, "bg-blue-500");
-    this.yellowRegion = new Region(YellowCities, "bg-yellow-400");
-    this.blackRegion = new Region(BlackCities, "bg-black");
-    this.redRegion = new Region(RedCities, "bg-red-500");
+
+    this.regions = {
+      blue: new Region(CITY_CONFIG.blue.cities, CITY_CONFIG.blue.uiColor),
+      yellow: new Region(CITY_CONFIG.yellow.cities, CITY_CONFIG.yellow.uiColor),
+      black: new Region(CITY_CONFIG.black.cities, CITY_CONFIG.black.uiColor),
+      red: new Region(CITY_CONFIG.red.cities, CITY_CONFIG.red.uiColor),
+    };
   }
 
-  blueCount(): number {
-    return this.blueRegion.trueCount();
-  }
-
-  yellowCount(): number {
-    return this.yellowRegion.trueCount();
-  }
-
-  blackCount(): number {
-    return this.blackRegion.trueCount();
-  }
-
-  redCount(): number {
-    return this.redRegion.trueCount();
+  getCount(color: Color): number {
+    return this.regions[color].trueCount();
   }
 
   usedCount(): number {
-    return this.nowEpidemic + this.blueRegion.falseCount() + this.yellowRegion.falseCount() + this.blackRegion.falseCount() + this.redRegion.falseCount() + this.eventCards;
+    const falseCounts = (Object.values(this.regions) as Region[]).reduce(
+      (acc, region) => acc + region.falseCount(),
+      0,
+    );
+    return this.nowEpidemic + falseCounts + this.eventCards;
   }
 
   totalCards(): number {
